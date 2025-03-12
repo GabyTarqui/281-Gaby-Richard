@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fortaleza de Contraseña</title>
+    <style>
+        /* Estilos básicos */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+        .password-container {
+            width: 300px;
+            text-align: center;
+        }
+        .password-container input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .strength-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .strength-bar-inner {
+            height: 100%;
+            width: 0;
+            background-color: red;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+        .strength-text {
+            font-size: 14px;
+            color: #666;
+        }
+        .requirements {
+            text-align: left;
+            margin-top: 10px;
+        }
+        .requirements ul {
+            list-style: none;
+            padding: 0;
+        }
+        .requirements li {
+            margin: 5px 0;
+            font-size: 12px;
+            color: #666;
+        }
+        .requirements li.valid {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="password-container">
+        <input type="password" id="password" placeholder="Ingresa tu contraseña">
+        <div class="strength-bar">
+            <div class="strength-bar-inner" id="strengthBar"></div>
+        </div>
+        <div class="strength-text" id="strengthText">Fortaleza: Muy Débil</div>
+        <div class="requirements">
+            <ul>
+                <li id="length">Al menos 8 caracteres</li>
+                <li id="uppercase">Al menos una mayúscula</li>
+                <li id="lowercase">Al menos una minúscula</li>
+                <li id="number">Al menos un número</li>
+                <li id="symbol">Al menos un símbolo</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const passwordInput = document.getElementById('password');
+        const strengthBar = document.getElementById('strengthBar');
+        const strengthText = document.getElementById('strengthText');
+        const requirements = {
+            length: document.getElementById('length'),
+            uppercase: document.getElementById('uppercase'),
+            lowercase: document.getElementById('lowercase'),
+            number: document.getElementById('number'),
+            symbol: document.getElementById('symbol')
+        };
+
+        passwordInput.addEventListener('input', function () {
+            const password = this.value;
+            let strength = 0;
+
+            // Verificar requisitos
+            const hasLength = password.length >= 8;
+            const hasUppercase = /[A-Z]/.test(password);
+            const hasLowercase = /[a-z]/.test(password);
+            const hasNumber = /[0-9]/.test(password);
+            const hasSymbol = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+
+            // Actualizar estilos de los requisitos
+            requirements.length.classList.toggle('valid', hasLength);
+            requirements.uppercase.classList.toggle('valid', hasUppercase);
+            requirements.lowercase.classList.toggle('valid', hasLowercase);
+            requirements.number.classList.toggle('valid', hasNumber);
+            requirements.symbol.classList.toggle('valid', hasSymbol);
+
+            // Calcular fortaleza
+            if (hasLength) strength += 20;
+            if (hasUppercase) strength += 20;
+            if (hasLowercase) strength += 20;
+            if (hasNumber) strength += 20;
+            if (hasSymbol) strength += 20;
+
+            // Actualizar barra y texto
+            strengthBar.style.width = strength + '%';
+            strengthBar.style.backgroundColor = getStrengthColor(strength);
+            strengthText.textContent = 'Fortaleza: ' + getStrengthText(strength);
+        });
+
+        function getStrengthColor(strength) {
+            if (strength < 40) return 'red';
+            if (strength < 70) return 'orange';
+            return 'green';
+        }
+
+        function getStrengthText(strength) {
+            if (strength < 40) return 'Muy Débil';
+            if (strength < 70) return 'Débil';
+            if (strength < 100) return 'Fuerte';
+            return 'Muy Fuerte';
+        }
+    </script>
+</body>
+</html>
